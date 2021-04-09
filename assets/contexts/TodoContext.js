@@ -8,9 +8,6 @@ class TodoContextProvider extends Component {
         this.state = {
             todos: [
                 {task: 'do something'},
-                {task: 'do something'},
-                {task: 'do something'},
-                {task: 'do something'},
             ],
         };
     }

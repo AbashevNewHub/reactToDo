@@ -14,7 +14,9 @@ class App extends Component {
     render() {
         return (
             <TodoContextProvider>
+
                 <TodoTable/>
+
             </TodoContextProvider>
         );
     }

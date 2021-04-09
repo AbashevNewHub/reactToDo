@@ -2,8 +2,7 @@ import React, {useContext} from 'react';
 import {TodoContext} from "../contexts/TodoContext";
 
 function TodoTable() {
-    let context;
-    context = useContext(TodoContext);
+    const context = useContext(TodoContext);
     return (
         <div>
             {context.todos.map(todo => (
