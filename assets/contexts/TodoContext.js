@@ -3,18 +3,27 @@ export const TodoContext = createContext();
 
 class TodoContextProvider extends Component {
 
-    constructor() {
-        super();
+    constructor(prop) {
+        super(prop);
         this.state = {
             todos: [
-                {task: 'do something'},
+                {name: 'do something'},
+                {name: 'do something 2'},
+                {name: 'do something 3'},
+                {name: 'do something 4'},
             ],
         };
     }
 
     //create
-    createTodo(){
-
+    createTodo(event, todo){
+        event.preventDefault();
+        //console.log(todo);
+        let data = [...this.state.todos];
+        data.push(todo);
+        this.setState({
+            todos: data
+        });
     }
 
     //read
