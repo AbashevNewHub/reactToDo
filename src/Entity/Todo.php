@@ -4,9 +4,15 @@ namespace App\Entity;
 
 use App\Repository\TodoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=TodoRepository::class)
+ * @UniqueEntity(
+ *     fields={"task"},
+ *     message="Task name must be unique!"
+ * )
  */
 class Todo
 {
@@ -18,9 +24,9 @@ class Todo
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=10, unique=true)
      */
-    private $name;
+    private $task;
 
     /**
      * @ORM\Column(type="string", length=500)
@@ -32,14 +38,14 @@ class Todo
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTask(): ?string
     {
-        return $this->name;
+        return $this->task;
     }
 
-    public function setName(string $name): self
+    public function setTask(?string $task): self
     {
-        $this->name = $name;
+        $this->task = $task;
 
         return $this;
     }
@@ -49,7 +55,7 @@ class Todo
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
@@ -58,6 +64,6 @@ class Todo
 
     public function toArray(): array
     {
-        return ['id' => $this->id, 'name' => $this->name, 'description' => $this->description];
+        return ['id' => $this->id, 'task' => $this->task, 'description' => $this->description];
     }
 }

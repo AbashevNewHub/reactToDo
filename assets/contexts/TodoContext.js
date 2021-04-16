@@ -16,28 +16,22 @@ class TodoContextProvider extends Component {
 
     //create
     createTodo(event, todo) {
-        if (todo.name !== "" && todo.description !== "") {
-            event.preventDefault();
-            axios.post('/api/todo/create', todo)
-                .then(response => {
-                    if (response.data.message.level === 'error') {
-                        this.setState({message: response.data.message});
-                    } else {
-                        let data = [...this.state.todos];
-                        data.push(response.data.todo);
-                        this.setState({
-                            todos: data,
-                            message: response.data.message,
-                        });
-                    }
-                }).catch(error => {
-                console.error(error);
-            });
-        } else {
-            this.setState({
-                message: {lavel: 'error', text: 'Problem with data'},
-            });
-        }
+        event.preventDefault();
+        axios.post('/api/todo/create', todo)
+            .then(response => {
+                if (response.data.message.level === 'error') {
+                    this.setState({message: response.data.message});
+                } else {
+                    let data = [...this.state.todos];
+                    data.push(response.data.todo);
+                    this.setState({
+                        todos: data,
+                        message: response.data.message,
+                    });
+                }
+            }).catch(error => {
+            console.error(error);
+        });
     }
 
     //read
@@ -54,32 +48,26 @@ class TodoContextProvider extends Component {
 
     //update
     updateTodo(todo) {
-        if (todo.name !== "" && todo.description !== "") {
-            axios.put('/api/todo/update/' + todo.id, todo)
-                .then(response => {
-                    if (response.data.message.level === 'error') {
-                        this.setState({message: response.data.message});
-                    } else {
-                        let data = [...this.state.todos];
-                        let item = data.find(elem => {
-                            return elem.id === todo.id
-                        });
-                        item.name = response.data.todo.name;
-                        item.description = response.data.todo.description;
-                        this.setState({
-                            todos: data,
-                            message: response.data.message,
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        } else {
-            this.setState({
-                message: {lavel: 'error', text: 'Problem with data'},
+        axios.put('/api/todo/update/' + todo.id, todo)
+            .then(response => {
+                if (response.data.message.level === 'error') {
+                    this.setState({message: response.data.message});
+                } else {
+                    let data = [...this.state.todos];
+                    let item = data.find(elem => {
+                        return elem.id === todo.id
+                    });
+                    item.task = response.data.todo.task;
+                    item.description = response.data.todo.description;
+                    this.setState({
+                        todos: data,
+                        message: response.data.message,
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
             });
-        }
     }
 
     //delete

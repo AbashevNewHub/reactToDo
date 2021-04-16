@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Todo;
+use App\Form\TodoType;
 use App\Repository\TodoRepository;
+use App\Service\TodoFormValidHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,14 +30,22 @@ class TodoController extends AbstractController
     /**
      * @Route("/create", name="api_todo_create", methods={"POST"})
      * @param Request $request
+     * @param TodoFormValidHelper $todoFormValidHelper
      * @return JsonResponse
      */
-    public function create(Request $request): JsonResponse
+    public function create(Request $request, TodoFormValidHelper $todoFormValidHelper): JsonResponse
     {
         $content = json_decode($request->getContent());
+        $form = $this->createForm(TodoType::class);
+        $form->submit((array)$content);
+        if (($errors = $todoFormValidHelper->isValidData($form)) !== true) {
+            return $this->json([
+                'message' => ['text' => implode("\n", $errors), 'level' => 'error'],
+            ]);
+        }
 
         $todo = new Todo();
-        $todo->setName($content->name);
+        $todo->setTask($content->task);
         $todo->setDescription($content->description);
         try {
             $this->em->persist($todo);
@@ -66,22 +76,35 @@ class TodoController extends AbstractController
     }
 
     /**
+     * Update To-Do
+     *
      * @Route("/update/{id}", name="api_todo_update", methods={"PUT"})
      * @param Request $request
      * @param Todo $todo
+     * @param TodoFormValidHelper $todoFormValidHelper
      * @return JsonResponse
      */
-    public function update(Request $request, Todo $todo): JsonResponse
+    public function update(Request $request, Todo $todo, TodoFormValidHelper $todoFormValidHelper): JsonResponse
     {
         $content = json_decode($request->getContent());
-        if ($todo->getName() === $content->name && $todo->getDescription() === $content->description) {
+        // Check exist changes
+        if ($todo->getTask() === $content->task && $todo->getDescription() === $content->description) {
             return $this->json([
                 'todo' => $todo->toArray(),
-                'message' => ['text' => 'There was no change to the To-Do. Neither the name or description was changed.', 'level' => 'warning'],
+                'message' => ['text' => 'There was no change to the To-Do.', 'level' => 'warning'],
+            ]);
+        }
+        // Validate
+        $form = $this->createForm(TodoType::class, $todo);
+        unset($content->id);
+        $form->submit((array)$content);
+        if (($errors = $todoFormValidHelper->isValidData($form)) !== true) {
+            return $this->json([
+                'message' => ['text' => implode("\n", $errors), 'level' => 'error'],
             ]);
         }
 
-        $todo->setName($content->name);
+        $todo->setTask($content->task);
         $todo->setDescription($content->description);
         try {
             $this->em->flush();

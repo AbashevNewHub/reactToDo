@@ -25,7 +25,7 @@ function AppSnackbar() {
         <Snackbar autoHideDuration={6000} open={context.message.text !== undefined}
                   onClose={() => context.setMessage({})}>
             {context.message.text && (
-                <SnackbarContent style={{backgroundColor: checkLevel(context.message.level)}}
+                <SnackbarContent style={{backgroundColor: checkLevel(context.message.level), whiteSpace: 'pre'}}
                                  severity={context.message.level}
                                  message={context.message.text}
                                  action={[

@@ -12,8 +12,8 @@ import DeleteDialog from "./DeleteDialog";
 
 function TodoTable() {
     const context = useContext(TodoContext);
-    const [addTodoName, setAddTodoName] = useState('');
-    const [editTodoName, setEditTodoName] = useState('');
+    const [addTodoTask, setAddTodoTask] = useState('');
+    const [editTodoTask, setEditTodoTask] = useState('');
     const [addTodoDescription, setAddTodoDescription] = useState('');
     const [editTodoDescription, setEditTodoDescription] = useState('');
     const [editIsShown, setEditIsShown] = useState(false);
@@ -25,14 +25,13 @@ function TodoTable() {
     }
     const onCreateSubmit = (event) => {
         event.preventDefault();
-        context.createTodo(event, {name: addTodoName, description: addTodoDescription});
-        setAddTodoName('');
+        context.createTodo(event, {task: addTodoTask, description: addTodoDescription});
+        setAddTodoTask('');
         setAddTodoDescription('');
     }
     const onEditSubmit = (todoId, event) => {
-        console.log('edit');
         event.preventDefault();
-        context.updateTodo({id: todoId, name: editTodoName, description: editTodoDescription});
+        context.updateTodo({id: todoId, task: editTodoTask, description: editTodoDescription});
         clear();
     }
     return (
@@ -41,7 +40,7 @@ function TodoTable() {
                 {/* HEAD */}
                 <TableHead>
                     <TableRow>
-                        <TableCell width="30%">Task name</TableCell>
+                        <TableCell width="30%">Task</TableCell>
                         <TableCell width="60%">Description</TableCell>
                         <TableCell width="10%" align="right">Actions</TableCell>
                     </TableRow>
@@ -51,15 +50,15 @@ function TodoTable() {
                     {/* ADD */}
                     <TableRow key="addNew">
                         <TableCell>
-                            {/* add Name field */}
+                            {/* add Task field */}
                             <TextField type="text"
-                                       label="Name"
+                                       label="Task"
                                        variant="outlined"
                                        fullWidth={true}
                                        required={true}
-                                       value={addTodoName}
+                                       value={addTodoTask}
                                        onChange={(event) => {
-                                           setAddTodoName(event.target.value);
+                                           setAddTodoTask(event.target.value);
                                        }}
                             />
                         </TableCell>
@@ -87,7 +86,7 @@ function TodoTable() {
                     {/* DATA */}
                     {context.todos.slice().reverse().map((todo, index) => (
                         <TableRow key={'todo' + index}>
-                            {/* NAME */}
+                            {/* TASK */}
                             <TableCell>
                                 {editIsShown === todo.id ?
                                     <TextField type="text"
@@ -95,13 +94,13 @@ function TodoTable() {
                                                autoFocus={true}
                                                fullWidth={true}
                                                required={true}
-                                               value={editTodoName}
+                                               value={editTodoTask}
                                                onChange={(event) => {
-                                                   setEditTodoName(event.target.value);
+                                                   setEditTodoTask(event.target.value);
                                                }}
                                     />
                                     :
-                                    <Typography>{todo.name}</Typography>
+                                    <Typography>{todo.task}</Typography>
                                 }
                             </TableCell>
 
@@ -134,7 +133,7 @@ function TodoTable() {
                                     <React.Fragment>
                                         <IconButton onClick={() => {
                                             setEditIsShown(todo.id);
-                                            setEditTodoName(todo.name);
+                                            setEditTodoTask(todo.task);
                                             setEditTodoDescription(todo.description);
                                         }}><EditIcon/></IconButton>
                                         <IconButton onClick={() => {
