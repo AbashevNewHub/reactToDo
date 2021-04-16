@@ -36,23 +36,18 @@ class TodoController extends AbstractController
 
         $todo = new Todo();
         $todo->setName($content->name);
+        $todo->setDescription($content->description);
         try {
             $this->em->persist($todo);
             $this->em->flush();
         } catch (\Exception $e) {
             return $this->json([
-                'message' => [
-                    'text' => ['Could not submit To-Do to the database'],
-                    'level' => 'error'
-                ],
+                'message' => ['text' => 'Could not reach database when attempting to create a To-Do.', 'level' => 'error'],
             ]);
         }
         return $this->json([
             'todo' => $todo->toArray(),
-            'message' => [
-                'text' => ['To-do has been created!', 'Task: ' . $content->name],
-                'level' => 'success'
-            ],
+            'message' => ['text' => 'To-do has been created!', 'level' => 'success'],
         ]);
     }
 
@@ -79,14 +74,25 @@ class TodoController extends AbstractController
     public function update(Request $request, Todo $todo): JsonResponse
     {
         $content = json_decode($request->getContent());
+        if ($todo->getName() === $content->name && $todo->getDescription() === $content->description) {
+            return $this->json([
+                'todo' => $todo->toArray(),
+                'message' => ['text' => 'There was no change to the To-Do. Neither the name or description was changed.', 'level' => 'warning'],
+            ]);
+        }
+
         $todo->setName($content->name);
+        $todo->setDescription($content->description);
         try {
             $this->em->flush();
         } catch (\Exception $e) {
-            //error
+            return $this->json([
+                'message' => ['text' => 'Could not reach database when attempting to update a To-Do.', 'level' => 'error'],
+            ]);
         }
         return $this->json([
-            'message' => 'todo ' . $todo->getId() . ' has been updated',
+            'todo' => $todo->toArray(),
+            'message' => ['text' => 'To-Do successfully updated!', 'level' => 'success'],
         ]);
 
     }
@@ -102,11 +108,13 @@ class TodoController extends AbstractController
             $this->em->remove($todo);
             $this->em->flush();
         } catch (\Exception $e) {
-            //error
+            return $this->json([
+                'message' => ['text' => 'Could not reach database when attempting to delete a To-Do.', 'level' => 'error'],
+            ]);
         }
 
         return $this->json([
-            'message' => 'todo has been deleted',
+            'message' => ['text' => 'To-Do has successfully been deleted!', 'level' => 'success'],
         ]);
     }
 }

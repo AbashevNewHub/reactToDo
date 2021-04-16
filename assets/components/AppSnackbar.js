@@ -12,6 +12,10 @@ function AppSnackbar() {
                 return 'green';
             case 'error':
                 return 'red';
+            case 'warning':
+                return 'orange';
+            case 'notice':
+                return 'beige'
             default:
                 return 'white';
         }
@@ -23,18 +27,14 @@ function AppSnackbar() {
             {context.message.text && (
                 <SnackbarContent style={{backgroundColor: checkLevel(context.message.level)}}
                                  severity={context.message.level}
-                                 message={context.message.text.map((text, index) => (
-                                     <React.Fragment key={index + ' ' + text}>
-                                         <span>{text}</span>
-                                         <br/>
-                                     </React.Fragment>
-                                 ))} action={[
-                    <IconButton
-                        onClick={() => context.setMessage({})}
-                        key='dismiss' color='inherit'>
-                        <CloseIcon/>
-                    </IconButton>
-                ]}/>
+                                 message={context.message.text}
+                                 action={[
+                                     <IconButton
+                                         onClick={() => context.setMessage({})}
+                                         key='dismiss' color='inherit'>
+                                         <CloseIcon/>
+                                     </IconButton>
+                                 ]}/>
             )}
         </Snackbar>
     );
