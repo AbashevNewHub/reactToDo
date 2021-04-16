@@ -1,7 +1,7 @@
 import React, {Component, useContext, useState} from 'react';
 import {TodoContext} from "../contexts/TodoContext";
 import {
-    Table, TableHead, TableBody, TableRow, TableCell, IconButton, TextField, InputAdornment, Typography
+    Table, TableHead, TableBody, TableRow, TableCell, IconButton, TextField, InputAdornment, Typography, makeStyles
 } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -9,6 +9,12 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteDialog from "./DeleteDialog";
+
+const useStyles = makeStyles(theme => ({
+    thead: {
+        backgroundColor: theme.palette.primary.main
+    }
+}));
 
 function TodoTable() {
     const context = useContext(TodoContext);
@@ -19,6 +25,8 @@ function TodoTable() {
     const [editIsShown, setEditIsShown] = useState(false);
     const [deleteConfirmationIsShown, setDeleteConfirmationIsShown] = useState(false);
     const [todoToBeDeleted, setTodoToBeDeleted] = useState(null);
+
+    const classes = useStyles();
 
     const clear = () => {
         setEditIsShown(false);
@@ -38,7 +46,7 @@ function TodoTable() {
         <React.Fragment>
             <Table>
                 {/* HEAD */}
-                <TableHead>
+                <TableHead className={classes.thead}>
                     <TableRow>
                         <TableCell width="30%">Task</TableCell>
                         <TableCell width="60%">Description</TableCell>
@@ -131,12 +139,12 @@ function TodoTable() {
                                     </React.Fragment>
                                     :
                                     <React.Fragment>
-                                        <IconButton onClick={() => {
+                                        <IconButton color="primary" onClick={() => {
                                             setEditIsShown(todo.id);
                                             setEditTodoTask(todo.task);
                                             setEditTodoDescription(todo.description);
                                         }}><EditIcon/></IconButton>
-                                        <IconButton onClick={() => {
+                                        <IconButton color="secondary" onClick={() => {
                                             setDeleteConfirmationIsShown(true);
                                             setTodoToBeDeleted(todo);
                                         }}><DeleteIcon/></IconButton>
